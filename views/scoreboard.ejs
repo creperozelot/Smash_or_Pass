@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scoreboard</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">Scoreboard</h1>
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                
+                <input type="text" id="user_id_input" class="form-control mb-3" placeholder="User ID"> 
+                <button onclick="javascript:callResult()" class="btn btn-primary mb-3">Search</button>
+                <button onclick="javascript:window.location.href = '/'" class="btn btn-secondary mb-3">Back to Homepage</button>
+
+                <div id="user-results">
+                    <% if (data) { %>
+                        <h3 class="text-center">Results for <%= selectedUser %>:</h3>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <ul class="list-group">
+                                    <% data.games.forEach(game => { %>
+                                        <a href="/?gameid=<%= String(game.gameid).replace('game_', '') %>"><li class="list-group-item"><%= game.name %> | Smashed: <%= game.smashes %> | Passed: <%= game.passes %></li></a>
+                                    <% }) %>
+                                </ul>
+                            </div>
+                        </div>
+                    <% } else if (error) { %>
+                        <div class="alert alert-danger"><%= error %></div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include('footer') %>
+
+        <script>
+            function callResult() {
+                const user = document.getElementById('user_id_input').value;
+                window.location.href='/scoreboard/' + user;
+            }
+        </script>
+    </body>
+</html>

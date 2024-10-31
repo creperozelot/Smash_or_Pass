@@ -1,0 +1,10 @@
+{
+    "unique_id": "main",
+    "display_name": "Test Game",
+    "creator": "author",
+    "items": [
+        { "name": "Person", "image": "https://via.placeholder.com/150" },
+        { "name": "Country", "image": "https://via.placeholder.com/150" },
+        { "name": "Item", "image": "https://via.placeholder.com/150" }
+    ]
+}

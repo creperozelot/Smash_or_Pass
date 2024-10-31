@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smash or Pass</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/cookieconsent.css">
+</head>
+<body>
+
+    <%- include('cookie-consent') %>
+
+    <div class="container" id="username-container">
+        <% if (!user) { %>
+        <h1 class="text-center">Login to Play</h1>
+        <p class="text-center">Hallo und Willkommen bei Smash oder Pass, bitte logge dich ein um Spielen zu können.</p>
+        <% } else { %>
+        <h1 class="text-center">Hello, <%= user.displayName %></h1>
+        <p class="text-center">Good to see you.<br>Do you want to play a game?<br> Nice! Press the green button to start.</p>
+        <% } %>
+        <div class="row justify-content-center">
+            <div class="col-md-6 text-center">
+                <% if (!user) { %>
+                    <a href="/auth/twitch" class="btn btn-secondary twitch-btn"> Login with Twitch</a>
+                    <a href="/scoreboard" class="btn btn-secondary">View Scoreboard</a>
+                <% } else { %>
+                    <button class="btn btn-success mb-3" id="start-btn">Start <%= people.display_name %></button>
+                    <button onclick="javascript:window.location.href='/scoreboard'" class="btn btn-secondary mb-3">Scoreboard</button>
+                    <button onclick="javascript:window.location.href='/logout'" class="btn btn-danger mb-3" id="start-btn">Logout</button>
+                    <input type="text" id="game_id_input" class="form-control mb-3" placeholder="Game ID"> <button onclick="javascript:loadGame()" class="btn btn-primary mb-3">Load Game</button>
+                <% } %>
+                
+                <script>
+                    function loadGame() {
+                        const gameId = document.getElementById('game_id_input').value;
+                        window.location.href='/?gameid=' + gameId;
+                    }
+                </script>
+
+            </div>
+        </div>
+    </div>
+
+    <% if (user) { %>
+        <div class="container" id="add_game_container">
+            <h1 class="text-center">Add your own Smash or Pass</h1>
+            <p class="text-center">You want to upload your own version of smash or pass? No Problem. Click the button below.<br>Your User ID: <span id="userid" class="blur"><%= user.id %></span></p>
+            <div class="row justify-content-center">
+                <div class="col-md-6 text-center">
+                        <a href="/submit" target="_blank" class="btn btn-secondary">Add Now</a>
+                        <a class="btn btn-secondary" id="userid_btn">Show ID</a>
+                </div>
+            </div>
+            <script>
+                function blur() {
+                const element = document.getElementById('userid');
+                const btn = document.getElementById('userid_btn');
+                if (element.classList.contains('blur')) {
+                    element.classList.remove('blur');
+                    btn.innerText = 'Hide ID';
+                } else {
+                    element.classList.add('blur');
+                    btn.innerText = 'Show ID';
+                }
+            }
+
+                document.getElementById('userid_btn').addEventListener('click', function(event) {
+                    event.preventDefault();
+                    blur();
+                });
+            </script>
+        </div>
+    <% } %>
+
+    <div class="container d-none" id="smash-or-pass-container">
+        <h1 class="text-center">Smash or Pass</h1>
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div id="card-container">
+                    <div class="card mb-4" id="person-card" data-index="0">
+                        <img src="<%= people.items[0].image %>" class="card-img-top" alt="<%= people.items[0].name %>">
+                        <div class="card-body text-center">
+                            <h5 class="card-title"><%= people.items[0].name %></h5>
+                            <button class="btn btn-success smash-button" id="smash-btn">Smash</button>
+                            <button class="btn btn-danger pass-button" id="pass-btn">Pass</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container d-none" id="results-container">
+        <h1 class="text-center">Results</h1>
+        <div class="row">
+            <div class="col-md-6">
+                <h3 class="text-center">Smashed</h3>
+                <ul id="smashed-list" class="list-group"></ul>
+            </div>
+            <div class="col-md-6">
+                <h3 class="text-center">Passed</h3>
+                <ul id="passed-list" class="list-group"></ul>
+            </div>
+        </div>
+        <a href="/" class="btn btn-primary"> Back to Start</a>
+    </div>
+
+    <% if (user) { %>
+        <div class="game-modes-panel" id="gamemode_panel">
+            <h4>Game Modes</h4>
+            <ul class="list-group">
+                <% for(var i=0; i < featured_gamemodes.official.length; i++) { %>
+                    <a href="/?gameid=<%= featured_gamemodes.official[i].unique_id %>">
+                        <li class="list-group-item official">
+                            <h4 class="title"><%= featured_gamemodes.official[i].display_name %></h4>
+                            <%= featured_gamemodes.official[i].description %>
+                            <br><small><%= featured_gamemodes.official[i].creator %></small>
+                        </li>
+                    </a>
+                <% } %>
+                <hr>
+                <% if (featured_gamemodes.unofficial.length != 0) {%>
+                    <% for(var i=0; i < featured_gamemodes.unofficial.length; i++) { %>
+                        <a href="/?gameid=<%= featured_gamemodes.unofficial[i].unique_id %>">
+                            <li class="list-group-item official">
+                                <h4 class="title"><%= featured_gamemodes.unofficial[i].display_name %></h4>
+                                <%= featured_gamemodes.unofficial[i].description %>
+                                <br><small><%= featured_gamemodes.unofficial[i].creator %></small>
+                            </li>
+                        </a>
+                    <% } %>
+                <% } else { %>
+                    <p>There are no unofficial featured games.</p>
+                <% } %>
+            </ul>
+        </div>
+    <% } %>
+    
+
+    <%- include('footer') %>
+
+    <script>
+        const people = <%- JSON.stringify(people.items) %>;
+        const user = <%- JSON.stringify(user) %>;
+        const gameid = <%- JSON.stringify(gameid) %>;
+    </script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="/js/main.js"></script>
+</body>
+</html>

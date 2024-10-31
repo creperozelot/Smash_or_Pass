@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smash or Pass</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        .upload-area {
+            border: 2px dashed #007bff;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .upload-area.dragover {
+            background: rgba(0, 123, 255, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <% if (alert) { %>
+        <div class="alert alert-danger" role="alert">
+            <%= alert %>
+        </div>
+    <% } %>
+
+    <% if (success) { %>
+        <div class="alert alert-success" role="alert">
+            <%= success %>
+        </div>
+    <% } %>
+
+    <% if (!user) { %>
+        <div class="container" id="username-container">
+            <h1 class="text-center">Upload own Game</h1>
+            <div class="row justify-content-center">
+                <div class="col-md-6 text-center">
+                    <p>You need to be logged in to add our own game.</p>
+                    <a href="/auth/twitch" class="btn btn-secondary twitch-btn"> Login with Twitch</a>
+                </div>
+            </div>
+        </div>
+    <% } else {%>
+        <div class="container" id="username-container">
+            <h1 class="text-center">Upload own Game</h1>
+            <div class="row justify-content-center">
+                <p class="text-center">You want to publish your own game to this website? No problem. 
+                <br>Download our example JSON on the bottom of our page.
+                Fill everything in and upload it here again.
+                After that you will be able to play that game on our Site.<br><br>
+                You aggree that you have read and fully understod our "Terms and Services" and our Privacy conditions.
+            </p>
+                <div class="col-md-6 text-center">
+                    <form action="/add-game-mode" method="post" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <label for="jsonData">JSON Data</label>
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="jsonFile" name="uploaded_file" accept=".json">
+                                <label class="custom-file-label" for="jsonFile">Choose file</label>
+                            </div>
+                            <p id="fileInfo" class="file-info"></p>
+                        </div>
+                        <button type="submit" class="btn btn-primary mb-3">Upload JSON</button>
+                        <button type="button" onclick="window.open('/samples/smash_or_pass_game.json', '_blank')" class="btn btn-secondary mb-3">Download Example JSON</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    <% } %>
+
+    <%- include('footer') %>
+
+    <script>
+        document.getElementById('jsonFile').addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                document.querySelector('.custom-file-label').textContent = file.name;
+                document.getElementById('fileInfo').textContent = `Selected file: ${file.name}`;
+            } else {
+                document.querySelector('.custom-file-label').textContent = 'Choose file';
+                document.getElementById('fileInfo').textContent = '';
+            }
+        });
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</body>
+</html>
